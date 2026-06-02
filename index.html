@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>出欠管理パネル</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f3f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* 縦スクロール防止 */
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            height: 95vh;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 15px;
+        }
+
+        /* タイトルとカウンターを横並びにするヘッダー */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 4px;
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            color: #4a5568;
+        }
+
+        /* カウンターの見た目 */
+        .counter {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #4a5568;
+            background: #e2e8f0;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        
+        .counter span {
+            color: #3b82f6; /* 数字の部分だけ青色に */
+            font-size: 1.1rem;
+        }
+
+        /* 4列×8行のグリッド配置 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        /* 出欠ボタン（通常時） */
+        .btn {
+            background: #f0f3f6;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 4px 4px 8px #d1d9e6, -4px -4px 8px #ffffff;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 出欠ボタン（へこみ時） */
+        .btn.active {
+            color: #3b82f6;
+            background: #e6eef8;
+            box-shadow: inset 4px 4px 6px #cbd5e1, inset -4px -4px 6px #ffffff;
+        }
+
+        /* リセットボタンのエリア */
+        .footer {
+            display: flex;
+            justify-content: center;
+            margin-top: 5px;
+        }
+
+        /* リセットボタン */
+        .reset-btn {
+            width: 100%;
+            padding: 12px;
+            background: #fee2e2;
+            border: none;
+            border-radius: 10px;
+            color: #ef4444;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 3px 3px 6px #d1d9e6, -3px -3px 6px #ffffff;
+            transition: background 0.2s;
+        }
+
+        .reset-btn:active {
+            background: #fca5a5;
+            box-shadow: inset 2px 2px 4px #cbd5e1, inset -2px -2px 4px #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>出欠管理パネル</h1>
+        <div class="counter">出席: <span id="attendCount">0</span> / 32</div>
+    </div>
+    
+    <div class="grid-container" id="grid"></div>
+    
+    <div class="footer">
+        <button class="reset-btn" id="resetBtn">すべての選択をリセット</button>
+    </div>
+</div>
+
+<script>
+    const gridContainer = document.getElementById('grid');
+    const resetBtn = document.getElementById('resetBtn');
+    const attendCountSpan = document.getElementById('attendCount');
+    const totalButtons = 32;
+
+    // カウンターを更新する関数
+    function updateCounter() {
+        const activeCount = document.querySelectorAll('.btn.active').length;
+        attendCountSpan.innerText = activeCount;
+    }
+
+    // ボタンを生成して配置
+    for (let i = 1; i <= totalButtons; i++) {
+        const button = document.createElement('button');
+        button.classList.add('btn');
+        button.innerText = String(i).padStart(2, '0');
+        
+        button.addEventListener('click', () => {
+            button.classList.toggle('active');
+            updateCounter(); // ボタンが押されるたびにカウントを更新
+        });
+
+        gridContainer.appendChild(button);
+    }
+
+    // リセットボタンの処理
+    resetBtn.addEventListener('click', () => {
+        const allButtons = document.querySelectorAll('.btn');
+        allButtons.forEach(button => {
+            button.classList.remove('active');
+        });
+        updateCounter(); // リセット後もカウントを更新
+    });
+</script>
+
+</body>
+</html>
